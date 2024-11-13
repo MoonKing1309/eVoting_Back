@@ -1,6 +1,7 @@
 const voterCollection = require("../model/voterSchema")
 const bcrypt = require("bcrypt")
 const xlsx = require('xlsx');
+const fs = require('fs');
 
 const voterLogin = async (req, res) => {
     try {
@@ -73,8 +74,8 @@ const voterUpload = async (req, res) => {
   
       const voters = data.map(row => ({
         voterID: row['Voter ID'],
-        phoneNumber: row['Phone Number'],
-        electionClearance:row['Election Clearance']
+        phoneNumber: row['Phone No'],
+        electionClearance:row['Ele Cle']
       }));
   
       const existingVoterIds = await voterCollection.find({ voterID: { $in: voters.map(v => v.voterID) } }).select('voterID');
