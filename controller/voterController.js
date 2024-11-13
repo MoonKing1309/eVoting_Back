@@ -1,5 +1,5 @@
 const voterCollection = require("../model/voterSchema")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const xlsx = require('xlsx');
 const fs = require('fs');
 
