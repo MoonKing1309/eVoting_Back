@@ -29,8 +29,16 @@ const countVote = async (req,res)=>{
     try{
         let {electionID} = req.params;
         let candidateDetails = await candidateCollection.find({electionID:electionID})
-        let data = await voteCollection.aggregate([{$match:{electionID:electionID}},{$group:{_id:"$candidateID",votes:{$sum:1}}},{$project: {_id: 0,candidateID: "$_id",votes: 1,}}])
-        console.log(data)
+        let tempData = await voteCollection.aggregate([{$match:{electionID:electionID}},{$group:{_id:"$candidateID",votes:{$sum:1}}},{$project: {_id: 0,candidateID: "$_id",votes: 1,}}])
+        const winner = tempData.reduce((max, candidate) => (candidate.votes > max.votes ? candidate : max), tempData[0]);
+        const data = tempData.map(item => {
+            const candidateDetail = candidateDetails.find(c => c.candidateID === item.candidateID);
+            if (candidateDetail) {
+              return { ...item, candidateName: candidateDetail.candidateName, candidateImg: candidateDetail.candidateImg ,isWinner: item.candidateID === winner.candidateID };
+            }
+          });
+          
+          console.log(data);
         return res.status(200).json(data)
     }
     catch(error){
