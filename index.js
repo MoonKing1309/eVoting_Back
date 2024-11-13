@@ -3,6 +3,8 @@ const express = require('express')
 const cors = require("cors");
 const app = express();
 const body_parser = require("body-parser");
+
+
 const voterRouter = require('./route/voterRouter')
 const candidateRouter = require('./route/candidateRouter')
 const otpRouter = require('./route/otpRouter')

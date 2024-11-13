@@ -4,9 +4,9 @@ const cron = require('node-cron');
 
 const electionCreation = async (req,res)=>{
     try{
-        var {electionID,electionName,electionDate} = req.body;
+        var {electionID,electionName,electionDate,electionClearance} = req.body;
 
-        await electionCollection.create({electionDate:electionDate,electionID:electionID,electionName:electionName,isDone:false})
+        await electionCollection.create({electionDate:electionDate,electionID:electionID,electionName:electionName,isDone:false,electionClearance:electionClearance})
         .then((data)=>{res.status(200).json({sucess:true,msg:data})})
         .catch((err)=>{console.log(err)})
     }
@@ -20,13 +20,14 @@ const electionFetch = async (req,res)=>{
         var {voterID} = req.params;
         let voterClearance;
         await voterCollection.findOne({voterID:voterID}).then((temp)=>{voterClearance=temp.electionClearance})
-        await electionCollection.find({isDone:false,electionClearance:{$gte:voterClearance}})
+        await electionCollection.find({isDone:false,electionClearance:{$lte:voterClearance}})
         .then((temp)=>{
             data = temp;
         })
         if(data.length==0)
             res.status(202).json({success:true,msg:'No Elections Found'})
-        res.status(200).json({sucess:true,msg:data})
+        else
+            res.status(200).json({sucess:true,msg:data})
     }
     catch(err){
         console.log(err)

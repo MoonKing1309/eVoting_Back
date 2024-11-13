@@ -6,7 +6,7 @@ const {
     countVote,
 } = require("../controller/voteController.js")
 
-router.route('/election/:voterID/:electionID').post(castVote)
+router.route('/elections/:voterID/:electionID').post(castVote)
 router.route('/results/:electionID').get(countVote)
 
 
