@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt")
 const xlsx = require('xlsx');
 
 const voterLogin = async (req, res) => {
-    console.log("sasi")
     try {
         const { voterID, pwd, phno } = req.body;
         let voterPwd = pwd
@@ -17,7 +16,6 @@ const voterLogin = async (req, res) => {
             })
             .catch((error) =>
                 console.log(error))
-        console.log(data.phoneNumber,phnNo)
         if (!data)
             return res.status(403).json({ success: false, msg: "Username does not exists" })
         else {
@@ -25,11 +23,11 @@ const voterLogin = async (req, res) => {
                 if (phnNo==data.phoneNumber)
                     return res.status(201).json({ success: true, msg: data._id })
                 else
-                    return res.status(405).json({ success: false, msg: "Phone number not Matched" })
+                    return res.status(402).json({ success: false, msg: "Phone number not Matched" })
 
             }
             else {
-                return res.status(402).json({ success: false, msg: "Password not Matched" })
+                return res.status(401).json({ success: false, msg: "Password not Matched" })
             }
         }
     } catch (error) {
@@ -104,7 +102,7 @@ const voterFetch = async (req, res) => {
     const { voterID } = req.params;
     var data
     try {
-        await voterCollection.findById({ voterID: voterID })
+        await voterCollection.findOne({ voterID: voterID })
             .then((temp) => {
                 data = temp
             })
@@ -132,10 +130,9 @@ const votersFetch = async(req,res)=>{
 }
 
 const voterUpdate = async (req, res) => {
-    const { voterID } = req.body;
+    const { voterID } = req.params;
     const { newPwd } = req.body;
     const hashPwd = await bcrypt.hash(newPwd, 3)
-    var data = false;
     try {
         await voterCollection.findOneAndUpdate({ voterID: voterID }, { voterPwd: hashPwd })
             .then(() => {

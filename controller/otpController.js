@@ -8,9 +8,9 @@ const client = require('twilio')(accountSid, authToken);
 
 const generateOTP = async (req, res) => {
     const { voterID } = req.params;
-
     try {
-        let phoneNumber = await voterCollection.findOne({voterID}).phoneNumber;
+        let phoneNumber;
+        await voterCollection.findOne({voterID}).then((temp)=>{phoneNumber=temp.phoneNumber})
         const otp = crypto.randomInt(100000, 999999).toString();
         const existingOTP = await OTP.findOne({ voterID });
         if (existingOTP) {
@@ -27,16 +27,14 @@ const generateOTP = async (req, res) => {
 
         client.messages.create({
             body: `Your OTP for the E-Voting-System is ${otp} . Expires in 300 seconds.`,
-            fron: '+13133073607',
-            to: `${phoneNumber}`
+            from: '+13133073607',
+            to: `+ 91 ${phoneNumber}`
         })
 
-            .then(message => console.log(message.sid));
-
-        res.status(200).json({ message: 'OTP sent successfully' });
+        res.status(200).json({ success:true,msg: 'OTP sent successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error generating OTP', error: error.message });
+        res.status(500).json({ sucess:false,msg: 'Error generating OTP'});
     }
 };
 
@@ -44,15 +42,15 @@ const verifyOTP = async (req, res) => {
     const {voterID} = req.params;
     const { finalOtp } = req.body;
     try {
-        const otpRecord = await OTP.findOne({ voterID, finalOtp });
+        const otpRecord = await OTP.findOne({ voterID });
         if (!otpRecord) {
             return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
         }
-        res.status(200).json({ message: 'OTP verified successfully' });
+        res.status(200).json({ success:true,msg: 'OTP verified successfully' });
         await OTP.deleteOne({ _id: otpRecord._id });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error verifying OTP', error: error.message });
+        res.status(500).json({sucess:false,msg:'Error verifying OTP' });
     }
 };
 

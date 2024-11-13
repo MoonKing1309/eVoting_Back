@@ -19,7 +19,7 @@ const electionFetch = async (req,res)=>{
         var data;
         var {voterID} = req.params;
         let voterClearance;
-        await voterCollection.findOne({voterID:voterID}).then((temp)=>{voterClearance=temp.data.electionClearance})
+        await voterCollection.findOne({voterID:voterID}).then((temp)=>{voterClearance=temp.electionClearance})
         await electionCollection.find({isDone:false,electionClearance:{$gte:voterClearance}})
         .then((temp)=>{
             data = temp;
@@ -38,8 +38,8 @@ const electionsFetch = async (req,res)=>{
         await electionCollection.find()
         .then((temp)=>{
             data = temp;
-        })
-        res.status(200).json({sucess:true,msg:data})
+        }).catch((err)=>console.log(err))
+        return res.status(200).json(data)
     }
     catch(err){
         console.log(err)
@@ -54,7 +54,7 @@ const completedElections = async(req,res)=>{
         .then((temp)=>{
             data = temp;
         })
-        res.status(200).json({sucess:true,msg:data})
+        res.status(200).json(data)
     }
     catch(err){
         console.log(err)

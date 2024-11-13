@@ -12,7 +12,7 @@ const {
 
 router.route('/login').post(voterLogin)
 router.route('/registerVoter').post(voterSignup)
-router.route('/account').put(voterUpdate)
+router.route('/account/:voterID').put(voterUpdate)
 router.route('/account/:voterID').get(voterFetch)
 router.route('/admin/voters').get(votersFetch)
 
