@@ -54,6 +54,16 @@ const voterSignup = async (req, res) => {
                 console.log(error))
         if (data)
             return res.status(409).json({ success: false, msg: "VoterID already exists" })
+        await voterCollection.findOne({ phoneNumber: phoneNumber })
+        .then((res) => {
+            if (res) {
+                data = true
+            }
+        })
+        .catch((error) =>
+            console.log(error))
+        if (data)
+            return res.status(410).json({ success: false, msg: "PhoneNumber already exists" })
         else
             await voterCollection.create({ voterID: voterID, voterPwd: hashPwd, phoneNumber: phnNo,electionClearance:electionClearance }).then((res) => { console.log(res) }).catch((err) => console.log(err))
         res.status(201).json({ success: true, msg: "Account Created!" })
